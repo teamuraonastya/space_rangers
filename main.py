@@ -40,24 +40,50 @@ SHIP2 = pygame.transform.rotate(pygame.transform.scale(
 SPACE = pygame.transform.scale(pygame.image.load(
     os.path.join('images', 'space.jpg')), (WIDTH, HEIGHT))
 
+MENU = True
+GAME = False
+COLL = False
+BONUS = pygame.image.load(
+    os.path.join('images', 'bonus.png'))
+CROSS = pygame.image.load(
+    os.path.join('images', 'cross.png'))
 
 def draw_window(red, yellow, red_bullets, yellow_bullets, red_health, yellow_health):
-    WIN.blit(SPACE, (0, 0))
-    pygame.draw.rect(WIN, BLACK, BORDER)
+    if MENU == True :
+        WIN.blit(SPACE, (0, 0))
+        WIN.blit(BONUS, (350, 250))
+        WIN.blit(BONUS, (350, 150))
+        f2 = pygame.font.SysFont('serif', 48)
+        f3 = pygame.font.SysFont('serif', 36)
+        text2 = f2.render("Играть", True, (0, 0, 139))
+        text3 = f3.render("Коллекция", True, (0, 0, 139))
+        WIN.blit(text2, (370, 245))
+        WIN.blit(text3, (365, 150))
+    
+    elif COLL == True:
+        WIN.blit(SPACE, (0, 0))
+        f4 = pygame.font.SysFont('serif', 48)
+        text4 = f4.render("Пока здесь ничего нет :(", True, WHITE)
+        WIN.blit(text4, (250, 245))
+        WIN.blit(CROSS, (860, 20))
+        
+    elif GAME == True:
+        WIN.blit(SPACE, (0, 0))
+        pygame.draw.rect(WIN, BLACK, BORDER)
 
-    red_health_text = HEALTH_FONT.render(str(red_health), 1, RED)
-    yellow_health_text = HEALTH_FONT.render(str(yellow_health), 1, YELLOW)
-    WIN.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
-    WIN.blit(yellow_health_text, (10, 10))
+        red_health_text = HEALTH_FONT.render(str(red_health), 1, RED)
+        yellow_health_text = HEALTH_FONT.render(str(yellow_health), 1, YELLOW)
+        WIN.blit(red_health_text, (WIDTH - red_health_text.get_width() - 10, 10))
+        WIN.blit(yellow_health_text, (10, 10))
 
-    WIN.blit(SHIP1, (yellow.x, yellow.y))
-    WIN.blit(SHIP2, (red.x, red.y))
+        WIN.blit(SHIP1, (yellow.x, yellow.y))
+        WIN.blit(SHIP2, (red.x, red.y))
 
-    for bullet in red_bullets:
-        pygame.draw.rect(WIN, RED, bullet)
+        for bullet in red_bullets:
+            pygame.draw.rect(WIN, RED, bullet)
 
-    for bullet in yellow_bullets:
-        pygame.draw.rect(WIN, YELLOW, bullet)
+        for bullet in yellow_bullets:
+            pygame.draw.rect(WIN, YELLOW, bullet)
 
     pygame.display.update()
 
@@ -111,6 +137,7 @@ def draw_winner(text):
 
 
 def main():
+    global GAME, MENU, COLL
     red = pygame.Rect(700, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
     yellow = pygame.Rect(100, 300, SPACESHIP_WIDTH, SPACESHIP_HEIGHT)
 
@@ -128,6 +155,21 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                mopos = pygame.mouse.get_pos()
+                if 320 <= mopos[0] <= 500 and 230 <= mopos[1] <= 275:
+                    MENU = False
+                    GAME = True
+                    COLL = False
+                if 320 <= mopos[0] <= 500 and 130 <= mopos[1] <= 200:
+                    MENU = False
+                    GAME = False
+                    COLL = True
+                if 850 <= mopos[0] <= 890 and 10 <= mopos[1] <= 80:
+                    MENU = True
+                    GAME = False
+                    COLL = False
+                    pygame.display.update()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LCTRL and len(yellow_bullets) < MAX_BULLETS:
                     bullet = pygame.Rect(
